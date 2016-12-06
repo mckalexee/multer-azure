@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/mckalexee/multer-azure/issues"
   },
-  "homepage": "https://github.com/mckalexee/multer-azure#readme"
+  "homepage": "https://github.com/mckalexee/multer-azure#readme",
+  "dependencies": {
+    "azure-storage": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "0.0.2"
+  }
 }
