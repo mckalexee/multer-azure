@@ -19,6 +19,10 @@ var upload = multer({
     account: '[Azure Storage Account]', //The name of the Azure storage account
     key: '[Azure Storage Account Key]', //A key listed under Access keys in the storage account pane
     container: '[Blob Container Name]'  //Any container name, it will be created if it doesn't exist
+    blobPathResolver: function(req, file, callback){
+      var blobPath = yourMagicLogic(req, file); //Calculate blobPath in your own way.
+      callback(null, blobPath);
+    }
   })
 })
 
@@ -38,16 +42,28 @@ Key|Description
 `encoding`| The file encoding.
 `mimetype`| The MIME type of the file.
 `filename`| The file name in the azure storage.
+`container` | The azure storage container where the file upload to.
+`blobPath` | The full blobName (or we call it blobPath).
+`url` | The full url of the file just got uploaded.
 
 ### File Naming
 
-Files in an Azure container have to have a unique name. Currently, `multer-azure` only uses one nameing convention:
+Files in an Azure container have to have a unique name. `multer-azure` allows you to customize the blobPath.
+
+Simply provide a blobPathResolver, the same way as what you do with multer.diskStorage.
+
+```javascript
+    blobPathResolver: function(req, file, callback){
+      var blobPath = yourMagicLogic(req, file);//Calculate blobPath in your own way.
+      callback(null, blobPath);
+    }
+```
+
+If you don't provide a blobPathResolver, a default file name is generated:
 
 `Date.now()` + `encodeURIComponent(new Buffer([FILENAME]).toString('base64'))` + extension.
 
 This results in a url safe filename that looks like `"1480994807566-Qmx1ZVBUQ0xvZ29MQVJHRTIwMTYuanBn.jpg"`, which is most likely overkill.
-
-TODO: Add multiple naming options, and reduce the name size of the default option.
 
 ### Azure Requirements
 
