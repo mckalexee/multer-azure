@@ -7,6 +7,7 @@ import * as azure from 'azure-storage';
 interface iOpts {
   account: string,
   key: string,
+  connectionString: string,
   container: string,
   blobPathResolver: (req: any, file: any, cb: (error: any, blobPath: string) => void) => void;
 }
@@ -20,7 +21,7 @@ class Blob {
   //Creates a new service to interact with azure blob storage
   constructor(opts: iOpts) {
     this.container = opts.container;
-    this.blobSvc = azure.createBlobService(opts.account, opts.key);
+    this.blobSvc = opts.connectionString ? azure.createBlobService(opts.connectionString) : azure.createBlobService(opts.account, opts.key);
     this.createContainer(this.container);
     this.blobPathResolver = opts.blobPathResolver;
   };

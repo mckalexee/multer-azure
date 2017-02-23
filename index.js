@@ -3,7 +3,7 @@ const azure = require("azure-storage");
 class Blob {
     constructor(opts) {
         this.container = opts.container;
-        this.blobSvc = azure.createBlobService(opts.account, opts.key);
+        this.blobSvc = opts.connectionString ? azure.createBlobService(opts.connectionString) : azure.createBlobService(opts.account, opts.key);
         this.createContainer(this.container);
         this.blobPathResolver = opts.blobPathResolver;
     }
