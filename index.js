@@ -1,40 +1,53 @@
 "use strict";
-var azure = require('azure-storage');
+Object.defineProperty(exports, "__esModule", { value: true });
+var azure = require("azure-storage");
 var Blob = (function () {
     function Blob(opts) {
         this.container = opts.container;
-        this.blobSvc = azure.createBlobService(opts.account, opts.key);
+        this.blobSvc = opts.connectionString ? azure.createBlobService(opts.connectionString) : azure.createBlobService(opts.account, opts.key);
         this.createContainer(this.container);
+        this.blobPathResolver = opts.blobPathResolver;
     }
+    ;
     Blob.prototype.createContainer = function (name) {
         this.blobSvc.createContainerIfNotExists(name, function (error, result, response) {
-            if (!error) {
-            }
-            else {
+            if (error) {
                 throw error;
             }
         });
     };
-    Blob.prototype._handleFile = function (req, file, cb) {
-        var re = /(?:\.([^.]+))?$/;
-        var ext = re.exec(file.originalname)[1];
-        var newName = Date.now() + '-' + encodeURIComponent(new Buffer(file.originalname).toString('base64')) + '.' + ext;
-        var writestream = this.blobSvc.createWriteStreamToBlockBlob(this.container, newName, function (err, result) {
-            if (err)
-                throw err;
-        });
-        file.stream.pipe(writestream);
-        console.log('Uploading:', file.originalname);
-        writestream.on('error', cb);
-        writestream.on('finish', function () {
-            console.log('Uploaded:', file.originalname);
-            cb(null, {
-                filename: newName,
-                originalname: file.originalname,
-                encoding: file.encoding,
-                mimetype: file.mimetype
+    Blob.prototype.uploadToBlob = function (req, file, cb) {
+        var that = this;
+        return function (something, blobPath) {
+            var blobStream = that.blobSvc.createWriteStreamToBlockBlob(that.container, blobPath, function (error) {
+                if (error) {
+                    cb(error);
+                }
             });
-        });
+            file.stream.pipe(blobStream);
+            blobStream.on("close", function () {
+                var fullUrl = that.blobSvc.getUrl(that.container, blobPath);
+                var fileClone = JSON.parse(JSON.stringify(file));
+                fileClone.container = that.container;
+                fileClone.blobPath = blobPath;
+                fileClone.url = fullUrl;
+                cb(null, fileClone);
+            });
+            blobStream.on("error", function (error) {
+                cb(error);
+            });
+        };
+    };
+    Blob.prototype._handleFile = function (req, file, cb) {
+        if (this.blobPathResolver) {
+            this.blobPathResolver(req, file, this.uploadToBlob(req, file, cb));
+        }
+        else {
+            var re = /(?:\.([^.]+))?$/;
+            var ext = re.exec(file.originalname)[1];
+            var newName = Date.now() + '-' + encodeURIComponent(new Buffer(file.originalname).toString('base64')) + '.' + ext;
+            this.uploadToBlob(req, file, cb)(null, newName);
+        }
     };
     Blob.prototype._removeFile = function (req, file, cb) {
         this.blobSvc.deleteBlob(this.container, file.filename, cb);
