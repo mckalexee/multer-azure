@@ -16,6 +16,7 @@ var app = express()
 
 var upload = multer({ 
   storage: multerAzure({
+    connectionString: '[Azure Storage Connection String]', //Connection String for azure storage account, this one is prefered if you specified, fallback to account and key if not.
     account: '[Azure Storage Account]', //The name of the Azure storage account
     key: '[Azure Storage Account Key]', //A key listed under Access keys in the storage account pane
     container: '[Blob Container Name]'  //Any container name, it will be created if it doesn't exist
@@ -66,6 +67,8 @@ If you don't provide a blobPathResolver, a default file name is generated:
 This results in a url safe filename that looks like `"1480994807566-Qmx1ZVBUQ0xvZ29MQVJHRTIwMTYuanBn.jpg"`, which is most likely overkill.
 
 ### Azure Requirements
+
+The `connectionString` will be prefered if you pass it, otherwise please provide account and key.
 
 The `account` is just the name of your storage account that you've created in Azure. For information on how to do this, check out [this tutorial.](https://docs.microsoft.com/en-us/azure/storage/storage-create-storage-account#create-a-storage-account)
 
