@@ -45,7 +45,11 @@ class Blob {
       file.stream.pipe(blobStream);
       blobStream.on("close", function(){
         var fullUrl = that.blobSvc.getUrl(that.container, blobPath); 
-        cb(null, Object.assign({}, file, {container: that.container, blobPath: blobPath, url: fullUrl}));
+        var fileClone = JSON.parse(JSON.stringify(file));
+        fileClone.container = that.container;
+        fileClone.blobPath = blobPath;
+        fileClone.url = fullUrl;
+        cb(null, fileClone);
       });
       blobStream.on("error", function(error){
         cb(error);
