@@ -1,6 +1,6 @@
 {
   "name": "multer-azure",
-  "version": "1.0.0-beta.1",
+  "version": "2.0.0",
   "description": "Streaming multer storage engine for Azure Blob storage.",
   "main": "index.js",
   "scripts": {
@@ -26,6 +26,7 @@
     "azure-storage": "^1.4.0"
   },
   "devDependencies": {
-    "@types/node": "0.0.2"
+    "@types/node": "^8.0.31",
+    "typescript": "^2.5.3"
   }
 }
