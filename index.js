@@ -7,12 +7,13 @@ var Blob = (function () {
         this.blobSvc = opts.connectionString ? azure.createBlobService(opts.connectionString) : azure.createBlobService(opts.account, opts.key);
         this.createContainer(this.container);
         this.blobPathResolver = opts.blobPathResolver;
+        this.error = null;
     }
     ;
     Blob.prototype.createContainer = function (name) {
-        this.blobSvc.createContainerIfNotExists(name, function (error, result, response) {
+        this.blobSvc.createContainerIfNotExists(name, (error, result, response) => {
             if (error) {
-                throw error;
+                this.error = error;
             }
         });
     };
@@ -39,7 +40,10 @@ var Blob = (function () {
         };
     };
     Blob.prototype._handleFile = function (req, file, cb) {
-        if (this.blobPathResolver) {
+        if(this.error){
+            cb(this.error);
+        }
+        else if (this.blobPathResolver) {
             this.blobPathResolver(req, file, this.uploadToBlob(req, file, cb));
         }
         else {

@@ -17,20 +17,21 @@ class Blob {
   private container: string;
   private blobSvc: azure.BlobService;
   private blobPathResolver: (req: any, file: any, cb: (error: any, blobPath: string) => void) => void;
-
+  private error: any;
   //Creates a new service to interact with azure blob storage
   constructor(opts: iOpts) {
     this.container = opts.container;
     this.blobSvc = opts.connectionString ? azure.createBlobService(opts.connectionString) : azure.createBlobService(opts.account, opts.key);
     this.createContainer(this.container);
     this.blobPathResolver = opts.blobPathResolver;
+    this.error = null;
   };
 
   //This creates the container if one doesn't exist
   private createContainer(name: string) {
-    this.blobSvc.createContainerIfNotExists(name, function (error, result, response) {
+    this.blobSvc.createContainerIfNotExists(name, (error, result, response) => {
       if (error) {
-        throw error;
+        this.error = error;
       }
     });
   }
@@ -60,8 +61,10 @@ class Blob {
 
   //Handles the files delivered from Multer and sends them to Azure Blob storage. _handleFile is a required function for multer storage engines
   public _handleFile(req: any, file: any, cb: any) {
-
-    if (this.blobPathResolver) {
+    if (this.error){
+      cb(this.error);
+    }
+    else if (this.blobPathResolver) {
       // call blobPathResolver to resolve the blobPath
       this.blobPathResolver(req, file, this.uploadToBlob(req, file, cb));
     } else {
