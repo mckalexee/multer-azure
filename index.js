@@ -11,9 +11,10 @@ var Blob = (function () {
     }
     ;
     Blob.prototype.createContainer = function (name) {
-        this.blobSvc.createContainerIfNotExists(name, (error, result, response) => {
+        var _this = this;
+        this.blobSvc.createContainerIfNotExists(name, function (error, result, response) {
             if (error) {
-                this.error = error;
+                _this.error = error;
             }
         });
     };
@@ -40,7 +41,7 @@ var Blob = (function () {
         };
     };
     Blob.prototype._handleFile = function (req, file, cb) {
-        if(this.error){
+        if (this.error) {
             cb(this.error);
         }
         else if (this.blobPathResolver) {
