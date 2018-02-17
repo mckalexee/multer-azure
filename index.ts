@@ -45,11 +45,13 @@ class Blob {
       });
       file.stream.pipe(blobStream);
       blobStream.on("close", function(){
-        var fullUrl = that.blobSvc.getUrl(that.container, blobPath); 
-        var fileClone = JSON.parse(JSON.stringify(file));
-        fileClone.container = that.container;
-        fileClone.blobPath = blobPath;
-        fileClone.url = fullUrl;
+        var fullUrl = that.blobSvc.getUrl(that.container, blobPath);
+        var fileClone = {
+          ...file,
+          container : that.container,
+          blobPath,
+          url: fullUrl
+        }
         cb(null, fileClone);
       });
       blobStream.on("error", function(error){
