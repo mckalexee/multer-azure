@@ -36,9 +36,14 @@ var Blob = (function () {
             });
             file.stream.pipe(blobStream);
             blobStream.on("close", function () {
-                var fullUrl = that.blobSvc.getUrl(that.container, blobPath);
-                var fileClone = __assign({}, file, { container: that.container, blobPath: blobPath, url: fullUrl });
-                cb(null, fileClone);
+                that.blobSvc.getBlobProperties(that.container, blobPath, function (error, result, response) {
+                    if (error) {
+                        cb(error);
+                    }
+                    var fullUrl = that.blobSvc.getUrl(that.container, blobPath);
+                    var fileClone = __assign({}, file, { container: that.container, blobPath: blobPath, url: fullUrl, size: result.contentLength, blobType: result.blobType, metadata: result.metadata });
+                    cb(null, fileClone);
+                });
             });
             blobStream.on("error", function (error) {
                 cb(error);
