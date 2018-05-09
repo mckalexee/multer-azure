@@ -40,17 +40,25 @@ class Blob {
   private uploadToBlob(req: any, file: any, cb: any) {
     var that = this;
     return function (something: any, blobPath: string) {
-      var blobStream = that.blobSvc.createWriteStreamToBlockBlob(that.container, blobPath, function(error){
+      var blobStream = that.blobSvc.createWriteStreamToBlockBlob(that.container, blobPath, req.uploadOptions || {}, function(error){
         if(error){cb(error);}
       });
       file.stream.pipe(blobStream);
       blobStream.on("close", function(){
-        var fullUrl = that.blobSvc.getUrl(that.container, blobPath); 
-        var fileClone = JSON.parse(JSON.stringify(file));
-        fileClone.container = that.container;
-        fileClone.blobPath = blobPath;
-        fileClone.url = fullUrl;
-        cb(null, fileClone);
+        that.blobSvc.getBlobProperties(that.container, blobPath, function(error, result, response){
+          if (error) { cb(error); }
+          var fullUrl = that.blobSvc.getUrl(that.container, blobPath);
+          var fileClone = {
+            ...file,
+            container : that.container,
+            blobPath,
+            url: fullUrl,
+            size: result.contentLength,
+            blobType: result.blobType,
+            metadata: result.metadata
+          }
+          cb(null, fileClone);
+        });
       });
       blobStream.on("error", function(error){
         cb(error);
