@@ -1,7 +1,7 @@
 {
-  "name": "multer-azure",
-  "version": "2.0.1",
-  "description": "Streaming multer storage engine for Azure Blob storage.",
+  "name": "multer-azure-blob",
+  "version": "1.0.0",
+  "description": "Streaming multer storage engine for Azure Blob storage. (Split from multer-azure, as it appears to be no longer maintained",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,19 +9,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mckalexee/multer-azure.git"
+    "url": "git+https://github.com/riceboyler/multer-azure.git"
   },
   "keywords": [
     "multer",
     "azure",
     "blob"
   ],
-  "author": "Alex McKenzie",
+  "author": "Alex McKenzie (updated by Jason Clark",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mckalexee/multer-azure/issues"
+    "url": "https://github.com/riceboyler/multer-azure/issues"
   },
-  "homepage": "https://github.com/mckalexee/multer-azure#readme",
+  "homepage": "https://github.com/riceboyler/multer-azure#readme",
   "dependencies": {
     "azure-storage": "^2.10.2"
   },
