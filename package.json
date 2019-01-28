@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/mckalexee/multer-azure#readme",
   "dependencies": {
-    "azure-storage": "^1.4.0"
+    "azure-storage": "^2.10.2"
   },
   "devDependencies": {
     "@types/node": "^8.0.31",
