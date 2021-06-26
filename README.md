@@ -60,9 +60,7 @@ Simply provide a blobPathResolver, the same way as what you do with multer.diskS
     }
 ```
 
-If you don't provide a blobPathResolver, a default file name is generated:
-
-`Date.now()` + `encodeURIComponent(new Buffer([FILENAME]).toString('base64'))` + extension.
+If you don't provide a blobPathResolver, a default file name is generated using `Date.now()` and `Math.random()`
 
 This results in a url safe filename that looks like `"1480994807566-Qmx1ZVBUQ0xvZ29MQVJHRTIwMTYuanBn.jpg"`, which is most likely overkill.
 

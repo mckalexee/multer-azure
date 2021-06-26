@@ -3,6 +3,7 @@
  */
 
 import * as azure from 'azure-storage';
+import { useID } from "@dothq/id";
 
 interface iOpts {
   account: string,
@@ -74,7 +75,7 @@ class Blob {
       var ext = re.exec(file.originalname)[1];
 
       //Creates a unique filename based on the time and appends the extension
-      var newName = Date.now() + '-' + encodeURIComponent(new Buffer(file.originalname).toString('base64')) + '.' + ext;
+      var newName = `${useID()}.${ext}`;
       this.uploadToBlob(req, file, cb)(null, newName);
     }
   }
