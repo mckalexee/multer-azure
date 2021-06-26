@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var azure = require("azure-storage");
+var id_1 = require("@dothq/id");
 var Blob = (function () {
     function Blob(opts) {
         this.container = opts.container;
@@ -50,7 +51,7 @@ var Blob = (function () {
         else {
             var re = /(?:\.([^.]+))?$/;
             var ext = re.exec(file.originalname)[1];
-            var newName = Date.now() + '-' + encodeURIComponent(new Buffer(file.originalname).toString('base64')) + '.' + ext;
+            var newName = id_1.useID() + "." + ext;
             this.uploadToBlob(req, file, cb)(null, newName);
         }
     };
